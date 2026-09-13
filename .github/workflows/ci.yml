@@ -6,11 +6,24 @@ on:
   push:
     branches: [develop, main]
 
-# Cancel superseded runs for the same ref (e.g. rapid pushes to a PR) so the slow emulator job
-# isn't queued up multiple times over.
+# Cancel superseded PR runs so the slow emulator job isn't queued up multiple times over -- but
+# never a push run. A push to develop/main is the record of whether that MERGED commit is green,
+# and cancelling it leaves the commit unverified for good.
+#
+# Not hypothetical here: two push runs on develop have already been cancelled this way --
+# c8ecf6a0 (2026-07-03, killed 22s in by a push 17s later) and 1eb2ab97 (2026-07-27, killed 57s in
+# by a push 41s later). Both are on develop and neither was ever verified. With a median run of
+# ~403s, a second push inside that window is the ordinary case, not a freak one: 9 of 74 push
+# gaps are under 15 minutes.
+#
+# So pushes get a per-COMMIT group and never share a lane. A shared group would not be safe even
+# with cancellation off: GitHub keeps only one PENDING run per group, so a third push would evict
+# the second's queued run before it started. cancel-in-progress is then redundant for pushes, but
+# it is kept explicit so the intent survives the next edit. (Matches QuasarApps/Aquifer's ci.yml,
+# which already had this right.)
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   debug:
