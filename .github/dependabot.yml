@@ -78,10 +78,10 @@ updates:
         update-types:
           - minor
           - patch
-      # Everything else (appcompat, datastore, the androidx.test libs, junit, robolectric, kover and
-      # the Gradle wrapper): roll minor/patch into a single low-noise weekly PR. Major bumps still
-      # open individually so they get a deliberate review. Note core-splashscreen is NOT in here —
-      # it is `androidx.core:*`, so it moves with the platform cohort above.
+      # Everything else (datastore, the androidx.test libs, junit, robolectric, kover, the Gradle
+      # wrapper, …): roll minor/patch into a single low-noise weekly PR. Major bumps still open
+      # individually so they get a deliberate review. Note core-splashscreen is NOT in here — it is
+      # `androidx.core:*`, so it moves with the platform cohort above.
       #
       # `patterns` + `exclude-patterns` are both load-bearing — see the precedence note at the top
       # of this file before simplifying either away.
