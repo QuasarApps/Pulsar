@@ -38,7 +38,7 @@ jobs:
       # Match the Gradle daemon JVM pinned in gradle/gradle-daemon-jvm.properties
       # (JetBrains Runtime 21), same as ci.yml.
       - name: Set up JBR 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: jetbrains
           java-version: '21'

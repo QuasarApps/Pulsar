@@ -37,7 +37,7 @@ jobs:
       # Runtime 21). Providing JBR 21 here lets Gradle reuse this JDK for the build daemon instead
       # of auto-provisioning JBR from the foojay download URLs on every cold run.
       - name: Set up JBR 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: jetbrains
           java-version: '21'
@@ -68,7 +68,7 @@ jobs:
       # Runtime 21). Providing JBR 21 here lets Gradle reuse this JDK for the build daemon instead
       # of auto-provisioning JBR from the foojay download URLs on every cold run.
       - name: Set up JBR 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: jetbrains
           java-version: '21'
@@ -121,7 +121,7 @@ jobs:
       # Runtime 21). Providing JBR 21 here lets Gradle reuse this JDK for the build daemon instead
       # of auto-provisioning JBR from the foojay download URLs on every cold run.
       - name: Set up JBR 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: jetbrains
           java-version: '21'
