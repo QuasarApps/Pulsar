@@ -24,19 +24,29 @@ version: 2
 #   wildcard pattern                100 - 10*(number of *) + max(len(pattern) - 5, 0)
 #   the bare pattern "*"              1
 #
-# `androidx-platform` was therefore inert from the day it was added (#90) until #106: its wildcard
+# The comparison is also asymmetric, which is the other half of the trap: `can_check_specificity?`
+# bails out on a group whose `patterns` is absent or empty, so such a group can never yield a
+# dependency to anyone — it is only ever the winner, never a loser.
+#
+# `androidx-platform` was therefore inert from the day it was added (#90) until #106. Its wildcard
 # patterns score 98-106 ("com.android.*" -> 98, "androidx.compose*" -> 102, "androidx.navigation:*"
-# -> 106), while `gradle-minor-patch` — having no `patterns` key at all — scored a flat 500 and
-# silently won every single one of them. AGP and the Compose BOM landed in the routine-bump PR
-# three weeks running (#103, #104, #106) and the platform group never opened one PR. Reordering the
-# groups would not have helped; order is not consulted.
+# -> 106), so it yielded every one of them to a `gradle-minor-patch` that had no `patterns` key,
+# scored a flat 500, and could not yield anything back. AGP and the Compose BOM landed in the
+# routine-bump PR three weeks running (#103, #104, #106) and the platform group never opened one
+# PR. Reordering the groups would not have helped; order is not consulted.
 #
 # The two rules on `gradle-minor-patch` below are what hold the split, and neither is cosmetic:
-#   - `patterns: ["*"]` is NOT a no-op. It means the same set of dependencies as omitting the key,
-#     but scores 1 instead of 500 — below any real pattern, so specific groups win.
+#   - `patterns: ["*"]` is NOT a no-op. Same set of dependencies as omitting the key, but it does
+#     two things omitting the key cannot: it makes the group eligible to yield at all, and it scores
+#     1 rather than 500, below any real pattern. Either alone would be insufficient.
 #   - `exclude-patterns` removes the cohort from this group outright via `contains?`, independent of
-#     any scoring. Keep it a mirror of `androidx-platform`'s `patterns`: a pattern added there and
-#     not here lands that dependency back in the routine bump.
+#     any scoring, so the split survives a change to the scoring constants. Keep it a mirror of
+#     `androidx-platform`'s `patterns`, and mind the asymmetry — the two drift directions are not
+#     equally bad:
+#       * a pattern added THERE but not here is harmless; `patterns: ["*"]` still routes it
+#         correctly on specificity alone.
+#       * a pattern added HERE but not there leaves that dependency in NO group — it opens its own
+#         PR, every week, quietly. This is the one to watch.
 updates:
   - package-ecosystem: gradle
     directory: "/"
