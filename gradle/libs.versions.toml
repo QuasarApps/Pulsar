@@ -34,7 +34,6 @@ espressoCore = "3.7.0"
 # Declared low; Gradle upgrades to whatever androidx.test.ext:junit pulls transitively.
 androidxTestCore = "1.7.0"
 androidxTestRules = "1.7.0"
-appcompat = "1.7.1"
 material = "1.14.0"
 # Compose BOM: pins the Compose library versions. The Compose compiler itself tracks Kotlin (see [plugins]).
 composeBom = "2026.06.01"
@@ -69,8 +68,6 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
-androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigationCompose" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

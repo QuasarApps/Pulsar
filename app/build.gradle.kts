@@ -202,7 +202,6 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
     // Compose
@@ -263,9 +262,6 @@ dependencies {
 
     // Coroutine test helpers (runTest, test dispatchers) for repository / view-model tests.
     androidTestImplementation(libs.kotlinx.coroutines.test)
-
-    // Navigation under test (TestNavHostController) for the end-to-end app navigation test.
-    androidTestImplementation(libs.androidx.navigation.testing)
 
     // Glance widget composable unit testing (runGlanceAppWidgetUnitTest).
     androidTestImplementation(libs.androidx.glance.testing)
