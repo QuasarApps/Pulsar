@@ -28,10 +28,11 @@ version: 2
 # bails out on a group whose `patterns` is absent or empty, so such a group can never yield a
 # dependency to anyone — it is only ever the winner, never a loser.
 #
-# `androidx-platform` was therefore inert from the day it was added (#90) until #106. Its wildcard
-# patterns score 98-106 ("com.android.*" -> 98, "androidx.compose*" -> 102, "androidx.navigation:*"
-# -> 106), so it yielded every one of them to a `gradle-minor-patch` that had no `patterns` key,
-# scored a flat 500, and could not yield anything back. AGP and the Compose BOM landed in the
+# `androidx-platform` was therefore inert from the day it was added (#90) until #106. Its eleven
+# patterns score from 98 ("com.android.*") to 126 ("org.jetbrains.kotlinx:kotlinx-coroutines*"), and
+# none of them could ever have reached 500 — with a single "*" that would take a pattern 415
+# characters long. So it yielded every dependency to a `gradle-minor-patch` that had no `patterns`
+# key, scored a flat 500, and could not yield anything back. AGP and the Compose BOM landed in the
 # routine-bump PR three weeks running (#103, #104, #106) and the platform group never opened one
 # PR. Reordering the groups would not have helped; order is not consulted.
 #
