@@ -5,16 +5,38 @@ version: 2
 # action versions pinned in .github/workflows/. PRs target `develop` (the
 # integration branch where CI + review happen), matching the normal flow.
 #
-# EDITING THIS FILE: Dependabot reads it from the repository's DEFAULT branch (`main`) — not from
-# the `target-branch` its PRs are opened against. So a change merged to `develop` has no effect
-# until a release promotes it to `main`. This is easy to miss precisely because every other part of
-# the flow is develop-first, and the `target-branch: develop` line below reinforces the wrong
-# intuition.
+# EDITING THIS FILE: Dependabot reads it from the repository's DEFAULT branch — not from the
+# `target-branch` its PRs are opened against. The default branch is currently `develop`, so an edit
+# merged here is live on the next run. It has not always been: when the default was `main`, the
+# `androidx-platform` group added in #90 sat on `develop` doing nothing until the v1.0.2 promotion
+# (#97) carried it over. If a config change appears to have no effect, check which branch is
+# actually the default before concluding anything — and see the note on precedence below, because
+# that has also masqueraded as "the config never arrived".
 #
-# It has already bitten once: the `androidx-platform` group was added in #90 and merged to
-# `develop`, but Dependabot kept applying the old grouping until the v1.0.2 promotion (#97) carried
-# it to `main` — which is why #94 bumped AGP under `gradle-minor-patch` instead. If a grouping or
-# schedule change appears to have no effect, check what `main` actually has, not `develop`.
+# GROUP PRECEDENCE IS BY SPECIFICITY, NOT BY DECLARATION ORDER. GitHub's docs say a dependency
+# joins "the first group it matches". dependabot-core does not do that. It offers every dependency
+# to every group it matches and skips a group only when some other matching group scores higher in
+# PatternSpecificityCalculator:
+#
+#   exact dependency name          1000
+#   pattern with no wildcard        500
+#   GROUP WITH NO `patterns` KEY    500   <- the trap
+#   wildcard pattern                100 - 10*(number of *) + max(len(pattern) - 5, 0)
+#   the bare pattern "*"              1
+#
+# `androidx-platform` was therefore inert from the day it was added (#90) until #106: its wildcard
+# patterns score 98-106 ("com.android.*" -> 98, "androidx.compose*" -> 102, "androidx.navigation:*"
+# -> 106), while `gradle-minor-patch` — having no `patterns` key at all — scored a flat 500 and
+# silently won every single one of them. AGP and the Compose BOM landed in the routine-bump PR
+# three weeks running (#103, #104, #106) and the platform group never opened one PR. Reordering the
+# groups would not have helped; order is not consulted.
+#
+# The two rules on `gradle-minor-patch` below are what hold the split, and neither is cosmetic:
+#   - `patterns: ["*"]` is NOT a no-op. It means the same set of dependencies as omitting the key,
+#     but scores 1 instead of 500 — below any real pattern, so specific groups win.
+#   - `exclude-patterns` removes the cohort from this group outright via `contains?`, independent of
+#     any scoring. Keep it a mirror of `androidx-platform`'s `patterns`: a pattern added there and
+#     not here lands that dependency back in the routine bump.
 updates:
   - package-ecosystem: gradle
     directory: "/"
@@ -30,9 +52,6 @@ updates:
       # #87. Isolating them into their own PR means a single library raising the compileSdk floor
       # reddens only THIS PR (not the routine-bump PR below), and this PR becomes the standing
       # "platform upgrade needed" signal — handled deliberately (cf. #89), not merged blind.
-      #
-      # NOTE: Dependabot assigns each dependency to the FIRST group whose patterns match, so this
-      # group MUST precede the catch-all `gradle-minor-patch` group below.
       androidx-platform:
         patterns:
           - "com.android.*"                             # Android Gradle Plugin
@@ -49,10 +68,28 @@ updates:
         update-types:
           - minor
           - patch
-      # Everything else (datastore, splashscreen, the androidx.test libs, robolectric, kover, …):
-      # roll minor/patch into a single low-noise weekly PR. Major bumps still open individually so
-      # they get a deliberate review.
+      # Everything else (appcompat, datastore, the androidx.test libs, junit, robolectric, kover and
+      # the Gradle wrapper): roll minor/patch into a single low-noise weekly PR. Major bumps still
+      # open individually so they get a deliberate review. Note core-splashscreen is NOT in here —
+      # it is `androidx.core:*`, so it moves with the platform cohort above.
+      #
+      # `patterns` + `exclude-patterns` are both load-bearing — see the precedence note at the top
+      # of this file before simplifying either away.
       gradle-minor-patch:
+        patterns:
+          - "*"
+        exclude-patterns:                               # mirror of androidx-platform's patterns
+          - "com.android.*"
+          - "com.google.android.material:*"
+          - "org.jetbrains.kotlin.*"
+          - "org.jetbrains.kotlinx:kotlinx-coroutines*"
+          - "androidx.core:*"
+          - "androidx.activity:*"
+          - "androidx.navigation:*"
+          - "androidx.lifecycle:*"
+          - "androidx.compose*"
+          - "androidx.glance:*"
+          - "androidx.work:*"
         update-types:
           - minor
           - patch
@@ -64,6 +101,8 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
+      # Single group for this ecosystem, so there is nothing for it to lose a specificity contest
+      # to; omitting `patterns` here is safe.
       github-actions:
         update-types:
           - minor
