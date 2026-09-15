@@ -40,7 +40,7 @@ composeBom = "2026.06.01"
 activityCompose = "1.13.0"
 # Must support SDK 36: Robolectric's default test SDK follows the project targetSdk, so the whole
 # JVM suite runs on the SDK 36 android-all jar. 4.16.x is the first line with stable SDK 36 support.
-robolectric = "4.16.1"
+robolectric = "4.17"
 # Compose-adjacent AndroidX libraries (navigation / lifecycle / datastore), versioned independently of
 # the Compose BOM above.
 navigationCompose = "2.9.8"
