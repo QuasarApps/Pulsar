@@ -13,7 +13,7 @@
 # app/build.gradle.kts). An AGP bump also ships a new R8, so it can change what gets stripped from
 # the release build; scripts/verify-release-keeps.sh verifies the reflection-only entry points
 # survived, and runs in the release CI job on every such bump.
-agp = "9.3.1"
+agp = "9.4.0"
 
 # Kotlin. The Compose compiler is applied via the org.jetbrains.kotlin.plugin.compose Gradle plugin
 # (versioned with Kotlin), replacing the old kotlinCompilerExtensionVersion.
@@ -23,7 +23,7 @@ agp = "9.3.1"
 # together in a deliberate platform-upgrade PR (cf. #89), never piecemeal: a partial bump is what
 # produced the compileSdk-floor and coroutines binary-skew failures in #77 and #87. Dependabot's
 # `androidx-platform` group exists to keep this cohort in one PR, separate from routine bumps.
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 coreKtx = "1.19.0"
 # Splash screen API (Android 12 system splash, backported to API 23+).
 coreSplashscreen = "1.2.0"
@@ -36,14 +36,14 @@ androidxTestCore = "1.7.0"
 androidxTestRules = "1.7.0"
 material = "1.14.0"
 # Compose BOM: pins the Compose library versions. The Compose compiler itself tracks Kotlin (see [plugins]).
-composeBom = "2026.06.01"
+composeBom = "2026.09.00"
 activityCompose = "1.13.0"
 # Must support SDK 36: Robolectric's default test SDK follows the project targetSdk, so the whole
 # JVM suite runs on the SDK 36 android-all jar. 4.16.x is the first line with stable SDK 36 support.
 robolectric = "4.16.1"
 # Compose-adjacent AndroidX libraries (navigation / lifecycle / datastore), versioned independently of
 # the Compose BOM above.
-navigationCompose = "2.9.8"
+navigationCompose = "2.10.1"
 lifecycleViewmodelCompose = "2.11.0"
 datastore = "1.2.1"
 glance = "1.1.1"
