@@ -13,7 +13,7 @@
 # app/build.gradle.kts). An AGP bump also ships a new R8, so it can change what gets stripped from
 # the release build; scripts/verify-release-keeps.sh verifies the reflection-only entry points
 # survived, and runs in the release CI job on every such bump.
-agp = "9.4.0"
+agp = "9.4.1"
 
 # Kotlin. The Compose compiler is applied via the org.jetbrains.kotlin.plugin.compose Gradle plugin
 # (versioned with Kotlin), replacing the old kotlinCompilerExtensionVersion.
