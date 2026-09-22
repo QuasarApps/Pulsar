@@ -145,6 +145,28 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
+
+            // Robolectric's FileDescriptorInterceptor implements FileDescriptor.setInt$ by reflecting
+            // into jdk.internal.access.SharedSecrets. JDK 17+ refuses that without an explicit export,
+            // and this build runs on JBR 21, so without the flag every Robolectric test dies in sandbox
+            // setup — AndroidInterceptors:88 wrapping an IllegalAccessException — before any test body
+            // runs. That is what reddened develop when 4.17 landed in #112.
+            //
+            // The interceptor is NOT new in 4.17: AndroidInterceptors.java is byte-identical in 4.16.1
+            // and reaches the same package on the same lines. What changed is that the path became
+            // reachable, which upstream reports against SDK 37 (robolectric/robolectric#11434). So this
+            // is coupled to the SDK level the JVM suite runs on, NOT to the Robolectric version:
+            // re-check it when the test SDK moves, not on every Robolectric bump.
+            //
+            // --add-exports rather than --add-opens is deliberate: setInt$ invokes a public method on a
+            // public class and never calls setAccessible, so an export is sufficient and an open would
+            // over-grant. getInt$ and release$ in the same interceptor DO call setAccessible on
+            // java.io.FileDescriptor's private fields, and throw past their own catch blocks if refused.
+            // Nothing exercises them here today; if that changes they need
+            // --add-opens=java.base/java.io=ALL-UNNAMED, which an export does not cover.
+            all {
+                it.jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+            }
         }
 
         // Gradle Managed Devices: AGP provisions/boots/tears down the emulator, so the instrumentation
