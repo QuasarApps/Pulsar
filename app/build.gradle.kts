@@ -145,6 +145,19 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
+
+            // Robolectric 4.17's FileDescriptorInterceptor reflects into jdk.internal.access.SharedSecrets
+            // to shim android.os.SharedMemory. JDK 17+ refuses that without an explicit export, so under
+            // the JBR 21 this build runs on, every Robolectric test dies in sandbox setup with an
+            // IllegalAccessException out of AndroidInterceptors — not in the assertion, before the test
+            // body runs at all. That is what reddened develop when 4.17 landed in #112; 4.16.1 did not
+            // need it. Robolectric documents this flag as the fix (robolectric/robolectric#11434).
+            //
+            // It is tied to the Robolectric version, not to this project: drop it only when a Robolectric
+            // release stops reaching for JDK internals, and re-check it on every Robolectric bump.
+            all {
+                it.jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+            }
         }
 
         // Gradle Managed Devices: AGP provisions/boots/tears down the emulator, so the instrumentation
