@@ -13,7 +13,7 @@
 # app/build.gradle.kts). An AGP bump also ships a new R8, so it can change what gets stripped from
 # the release build; scripts/verify-release-keeps.sh verifies the reflection-only entry points
 # survived, and runs in the release CI job on every such bump.
-agp = "9.4.0"
+agp = "9.4.1"
 
 # Kotlin. The Compose compiler is applied via the org.jetbrains.kotlin.plugin.compose Gradle plugin
 # (versioned with Kotlin), replacing the old kotlinCompilerExtensionVersion.
@@ -24,7 +24,7 @@ agp = "9.4.0"
 # produced the compileSdk-floor and coroutines binary-skew failures in #77 and #87. Dependabot's
 # `androidx-platform` group exists to keep this cohort in one PR, separate from routine bumps.
 kotlin = "2.4.20"
-coreKtx = "1.19.0"
+coreKtx = "1.19.1"
 # Splash screen API (Android 12 system splash, backported to API 23+).
 coreSplashscreen = "1.2.0"
 junit = "4.13.2"
@@ -43,12 +43,12 @@ activityCompose = "1.13.0"
 robolectric = "4.17"
 # Compose-adjacent AndroidX libraries (navigation / lifecycle / datastore), versioned independently of
 # the Compose BOM above.
-navigationCompose = "2.10.1"
+navigationCompose = "2.10.2"
 lifecycleViewmodelCompose = "2.11.0"
 datastore = "1.2.1"
 glance = "1.1.1"
 # Deferred background work: periodic widget refresh.
-work = "2.11.2"
+work = "2.12.0"
 # This one ref versions BOTH kotlinx-coroutines-android (an explicit app implementation dep) and
 # kotlinx-coroutines-test. They MUST match: in the split-APK instrumented tests, coroutines-test resolves
 # its runtime against the *app* APK's core, so a test artifact newer than the app's core throws
